@@ -58,11 +58,17 @@ function BunnyMascot({ mood = 'happy', small = false }) {
 function Piece({ materialId, sample = false }) {
   const material = MATERIAL_MAP[materialId];
   if (!material) return null;
+  const isPerson = material.kind.startsWith('person-');
 
   return (
     <span
       className={`piece ${sample ? 'piece--sample' : ''} piece--${material.kind}`}
-      style={{ '--piece-color': material.color, '--piece-accent': material.accent }}
+      style={{
+        '--piece-color': material.color,
+        '--piece-accent': material.accent,
+        '--piece-hair': material.hair,
+        '--piece-skin': material.skin,
+      }}
       aria-hidden="true"
     >
       <span className="piece__shape">
@@ -110,6 +116,19 @@ function Piece({ materialId, sample = false }) {
             <span className="piece__fence-picket piece__fence-picket--one" />
             <span className="piece__fence-picket piece__fence-picket--two" />
             <span className="piece__fence-picket piece__fence-picket--three" />
+          </>
+        )}
+        {isPerson && (
+          <>
+            <span className="piece__person-hair" />
+            <span className="piece__person-body" />
+            <span className="piece__person-head">
+              <span className="piece__person-eye piece__person-eye--left" />
+              <span className="piece__person-eye piece__person-eye--right" />
+              <span className="piece__person-cheek piece__person-cheek--left" />
+              <span className="piece__person-cheek piece__person-cheek--right" />
+            </span>
+            <span className="piece__person-accessory" />
           </>
         )}
       </span>
@@ -249,13 +268,13 @@ function HomeScreen({ onStart, soundOn, onToggleSound }) {
 
       <section className="home-hero">
         <div className="home-copy">
-          <div className="eyebrow"><span>米粒的造屋邀请</span></div>
+          <div className="eyebrow"><span>米粒的城堡邀请</span></div>
           <h1>
             小小建筑师，
             <span>今天盖哪一座？</span>
           </h1>
           <p className="home-intro">
-            看着目标小屋，把积木放到一样的位置。相似度超过 90%，星星就会亮起来！
+            看着目标城堡，把积木放到一样的位置。相似度超过 90%，星星就会亮起来！
           </p>
           <div className="home-actions">
             <button className="primary-button primary-button--big" type="button" onClick={() => onStart('challenge')}>
@@ -277,7 +296,7 @@ function HomeScreen({ onStart, soundOn, onToggleSound }) {
           </div>
         </div>
 
-        <div className="home-showcase" aria-label="草莓奶油屋示例">
+        <div className="home-showcase" aria-label={`${LEVELS[0].name}示例`}>
           <div className="pin pin--left" aria-hidden="true" />
           <div className="pin pin--right" aria-hidden="true" />
           <div className="showcase-label">今日目标</div>
@@ -285,10 +304,10 @@ function HomeScreen({ onStart, soundOn, onToggleSound }) {
             placements={LEVELS[0].target}
             compact
             hideGrid
-            label="草莓奶油屋预览"
+            label={`${LEVELS[0].name}预览`}
           />
           <div className="showcase-caption">
-            <span>草莓奶油屋</span>
+            <span>{LEVELS[0].name}</span>
             <span className="showcase-stars" aria-label="三颗星">★ ★ ★</span>
           </div>
           <div className="mascot-note">
@@ -482,8 +501,8 @@ function Celebration({ result, level, onClose, onNext, isLastLevel }) {
         <div className="result-modal__badge" aria-hidden="true">
           {passed ? <span>★</span> : <BunnyMascot mood="thinking" small />}
         </div>
-        <p className="result-modal__kicker">{passed ? '房子验收成功' : '就差一点点'}</p>
-        <h2 id="result-title">{passed ? '哇，星星亮起来啦！' : '再看看目标小屋吧'}</h2>
+        <p className="result-modal__kicker">{passed ? '城堡验收成功' : '就差一点点'}</p>
+        <h2 id="result-title">{passed ? '哇，星星亮起来啦！' : '再看看目标城堡吧'}</h2>
         <div className="result-score">
           <strong>{result.score}</strong><span>%</span>
         </div>
@@ -502,7 +521,7 @@ function Celebration({ result, level, onClose, onNext, isLastLevel }) {
           ) : (
             <button className="primary-button" type="button" onClick={onClose}>继续搭建</button>
           )}
-          {passed && <button className="text-button" type="button" onClick={onClose}>再看看我的房子</button>}
+          {passed && <button className="text-button" type="button" onClick={onClose}>再看看我的城堡</button>}
         </div>
       </section>
     </div>
@@ -516,12 +535,12 @@ function HelpModal({ onClose }) {
         <button className="modal-close" type="button" onClick={onClose} aria-label="关闭玩法说明">×</button>
         <div className="help-modal__heading">
           <BunnyMascot small />
-          <div><small>米粒教你</small><h2 id="help-title">三步盖好小房子</h2></div>
+          <div><small>米粒教你</small><h2 id="help-title">三步盖好小城堡</h2></div>
         </div>
         <ol className="help-steps">
           <li><b>1</b><span><strong>选一块材料</strong>点一下下方的积木。</span></li>
           <li><b>2</b><span><strong>放进格子里</strong>再点一下想放的位置，也可以直接拖过去。</span></li>
-          <li><b>3</b><span><strong>检查房子</strong>相似度超过 90% 就过关。</span></li>
+          <li><b>3</b><span><strong>检查城堡</strong>相似度超过 90% 就过关。</span></li>
         </ol>
         <button className="primary-button" type="button" onClick={onClose}>我会啦</button>
       </section>
@@ -886,7 +905,7 @@ function App() {
             <div><span>材料盒</span><small>{tool === 'erase' ? '橡皮擦已拿好，点积木就能擦掉' : '先选材料，再点格子；也可以拖过去'}</small></div>
             {mode === 'challenge' && (
               <button className="check-button" type="button" onClick={checkHouse}>
-                检查房子 <span aria-hidden="true">★</span>
+                检查城堡 <span aria-hidden="true">★</span>
               </button>
             )}
           </div>

@@ -5,6 +5,7 @@ import {
   GRID_ROWS,
   LEVELS,
   MATERIAL_MAP,
+  MATERIALS,
 } from './gameData.js';
 import {
   calculateSimilarity,
@@ -59,10 +60,12 @@ test('the campaign contains six sequential, playable levels', () => {
 
   LEVELS.forEach((level, index) => {
     assert.equal(level.number, index + 1);
-    assert.ok(level.target.length >= 24, `${level.name} should contain a full house`);
+    assert.match(level.name, /城堡$/);
+    assert.ok(level.target.length >= 24, `${level.name} should contain a full castle`);
     assert.equal(calculateSimilarity(level.target, level.target), 100);
 
     const occupiedCells = new Set();
+    const roofColumns = new Set();
     level.target.forEach((placement) => {
       assert.ok(placement.row >= 0 && placement.row < GRID_ROWS);
       assert.ok(placement.col >= 0 && placement.col < GRID_COLS);
@@ -74,6 +77,25 @@ test('the campaign contains six sequential, playable levels', () => {
       const key = `${placement.row}:${placement.col}`;
       assert.equal(occupiedCells.has(key), false, `${level.name} should not overlap cells`);
       occupiedCells.add(key);
+
+      if (MATERIAL_MAP[placement.material].kind === 'roof') {
+        roofColumns.add(placement.col);
+      }
     });
+
+    assert.ok(roofColumns.size >= 3, `${level.name} should have at least three towers`);
+  });
+});
+
+test('people are available as friendly decorations throughout the campaign', () => {
+  const people = MATERIALS.filter(({ kind }) => kind.startsWith('person-'));
+
+  assert.equal(people.length, 3);
+  people.forEach((person) => assert.equal(person.category, '装饰'));
+  LEVELS.forEach((level) => {
+    assert.ok(
+      level.target.some(({ material }) => MATERIAL_MAP[material].kind.startsWith('person-')),
+      `${level.name} should welcome a character`,
+    );
   });
 });
