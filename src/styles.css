@@ -1022,10 +1022,10 @@ button:focus-visible {
   position: absolute;
   inset: -8%;
   color: var(--piece-color);
-  font-size: clamp(23px, 5vw, 64px);
+  font-size: 90cqw;
   line-height: 1;
   text-align: center;
-  text-shadow: 0 4px 0 var(--piece-accent);
+  text-shadow: 0 6cqw 0 var(--piece-accent);
   transform: rotate(-8deg);
 }
 
@@ -1132,9 +1132,9 @@ button:focus-visible {
   left: 51%;
   z-index: 2;
   color: #ffe36b;
-  font-size: clamp(12px, 2.4vw, 30px);
+  font-size: 46cqw;
   line-height: 1;
-  text-shadow: 0 2px 0 rgba(133, 75, 67, 0.26);
+  text-shadow: 0 3cqw 0 rgba(133, 75, 67, 0.26);
 }
 
 .piece--fence .piece__shape {
@@ -1379,9 +1379,7 @@ button:focus-visible {
   height: 52px;
 }
 
-.piece--sample .piece__star { font-size: 47px; }
 .piece--sample .piece__window-heart { font-size: 39px; }
-.piece--sample .piece__flag-star { font-size: 24px; }
 
 .sky-cloud {
   z-index: 0;
@@ -1543,19 +1541,16 @@ button:focus-visible {
 
 .level-path {
   position: relative;
-  display: flex;
+  display: grid;
   margin-bottom: 24px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px 6px;
   align-items: center;
-  justify-content: space-between;
+  justify-items: center;
 }
 
 .level-path::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  left: 20px;
-  border-top: 3px dotted #cfdae5;
+  content: none;
 }
 
 .level-path button {

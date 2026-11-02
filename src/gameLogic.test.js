@@ -55,8 +55,8 @@ test('hint returns the first missing or incorrect target cell', () => {
   assert.deepEqual(findHint(target, partial), target[0]);
 });
 
-test('the campaign contains six sequential, playable levels', () => {
-  assert.equal(LEVELS.length, 6);
+test('the campaign contains ten sequential, playable levels', () => {
+  assert.equal(LEVELS.length, 10);
 
   LEVELS.forEach((level, index) => {
     assert.equal(level.number, index + 1);
@@ -96,6 +96,29 @@ test('people are available as friendly decorations throughout the campaign', () 
     assert.ok(
       level.target.some(({ material }) => MATERIAL_MAP[material].kind.startsWith('person-')),
       `${level.name} should welcome a character`,
+    );
+  });
+});
+
+test('each level increases the building challenge', () => {
+  LEVELS.slice(1).forEach((level, index) => {
+    const previous = LEVELS[index];
+    const materialKinds = new Set(level.target.map(({ material }) => material));
+    const previousMaterialKinds = new Set(
+      previous.target.map(({ material }) => material),
+    );
+
+    assert.ok(
+      level.target.length > previous.target.length,
+      `${level.name} should use more pieces than ${previous.name}`,
+    );
+    assert.ok(
+      materialKinds.size > previousMaterialKinds.size,
+      `${level.name} should use more material types than ${previous.name}`,
+    );
+    assert.ok(
+      level.palette.length > previous.palette.length,
+      `${level.name} should offer more choices than ${previous.name}`,
     );
   });
 });
